@@ -1,0 +1,7 @@
+node_modules
+dist
+dist-server
+dist-hosted
+e2e-output
+data
+.env

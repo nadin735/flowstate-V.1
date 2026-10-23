@@ -1,0 +1,43 @@
+{
+  "name": "flowstate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FLOWSTATE — AI-assisted digital transformation & project intelligence platform (demo).",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/notices.mjs && node scripts/build.mjs && node scripts/build.mjs --single",
+    "start": "node dist-server/server.mjs",
+    "dev": "node scripts/build.mjs && node --watch dist-server/server.mjs",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "e2e": "node scripts/e2e.mjs",
+    "demo:scan": "python3 scripts/make-demo-scan.py",
+    "build:vercel": "node scripts/build-vercel.mjs",
+    "e2e:vercel": "node scripts/build-vercel.mjs && node scripts/e2e-vercel.mjs",
+    "a11y": "node scripts/a11y-contrast.mjs"
+  },
+  "dependencies": {
+    "d3-scale": "4.0.2",
+    "d3-shape": "3.2.0",
+    "esbuild": "0.28.2",
+    "pdfjs-dist": "6.2.108",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-icons": "5.7.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/d3-scale": "4.0.9",
+    "@types/d3-shape": "3.2.0",
+    "@types/node": "26.2.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "playwright": "1.56.0",
+    "tsx": "4.23.12",
+    "typescript": "6.0.3"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

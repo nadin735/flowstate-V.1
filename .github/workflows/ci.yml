@@ -1,0 +1,25 @@
+# Runs on every push and pull request: install, security audit, unit tests, production builds,
+# and the end-to-end journey in headless Chromium.
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Uses package-lock.json when committed (recommended), otherwise resolves fresh.
+      - run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Security audit (production dependencies)
+        run: npm audit --omit=dev --audit-level=high
+      - run: npm test
+      - run: npm run build
+      - run: npm run build:vercel
+      - run: npx playwright install --with-deps chromium
+      - run: npm run e2e

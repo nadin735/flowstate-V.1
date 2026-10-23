@@ -1,0 +1,9 @@
+node_modules
+dist/
+dist-server/
+data/
+e2e-output/
+.env
+dist-hosted/
+.vercel/
+dist-demo/
