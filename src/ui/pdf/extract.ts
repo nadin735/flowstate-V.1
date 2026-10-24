@@ -4,6 +4,7 @@
  * few pages, and this works everywhere — also from a local file and under strict CSPs.
  */
 // The legacy build ships polyfills, so it also runs in browsers without the newest JS features.
+import "./polyfills";
 import * as pdfjs from "pdfjs-dist/legacy/build/pdf.min.mjs";
 import * as pdfWorker from "pdfjs-dist/legacy/build/pdf.worker.min.mjs";
 import { itemsToLines } from "../../domain/sheetParser";

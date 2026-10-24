@@ -2,7 +2,7 @@
   "name": "flowstate",
   "version": "1.0.0",
   "private": true,
-  "description": "FLOWSTATE — AI-assisted digital transformation & project intelligence platform (demo).",
+  "description": "FLOWSTATE \u2014 AI-assisted digital transformation & project intelligence platform (demo).",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -17,7 +17,8 @@
     "demo:scan": "python3 scripts/make-demo-scan.py",
     "build:vercel": "node scripts/build-vercel.mjs",
     "e2e:vercel": "node scripts/build-vercel.mjs && node scripts/e2e-vercel.mjs",
-    "a11y": "node scripts/a11y-contrast.mjs"
+    "a11y": "node scripts/a11y-contrast.mjs",
+    "e2e:safari": "node scripts/e2e-safari.mjs"
   },
   "dependencies": {
     "d3-scale": "4.0.2",
