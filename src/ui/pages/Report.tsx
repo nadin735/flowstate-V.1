@@ -29,7 +29,8 @@ export function ReportPage() {
   const downloadHtml = async () => {
     if (!ref.current) return;
     // Light theme, inline styles: the file must look right when opened on its own or printed.
-    const css = Array.from(document.querySelectorAll("style")).map((x) => x.textContent).join("\n");
+    // @font-face rules point at /fonts on this site and would 404 in a standalone file; the font stack falls back to system fonts.
+    const css = Array.from(document.querySelectorAll("style")).map((x) => x.textContent).join("\n").replace(/@font-face\s*\{[^}]*\}/g, "");
     const html = `<!doctype html><html lang="en" data-mode="light" data-accent="${p.preferences.accent}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${(p.name || "Report").replace(/[<>&]/g, "")} — FLOWSTATE report</title><style>${css}</style></head><body class="report-standalone">${ref.current.outerHTML}</body></html>`;
     const name = `flowstate-report-${today}.html`;
     try {

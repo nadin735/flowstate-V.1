@@ -40,6 +40,7 @@ export async function saveFile(filename: string, data: string, mime: string): Pr
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  // Mobile Safari reads the blob after click() returns; revoking too early cancels the download.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
   return true;
 }

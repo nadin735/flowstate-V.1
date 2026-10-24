@@ -266,7 +266,7 @@ function buildKpis(seedCo: CompanySeed, today: string): KpiMeasurement[] {
   const process = { id: "ap", name: "Invoice processing", monthlyVolume: seedCo.volume, steps: seedCo.steps };
   const base = processBaseline(process);
   const r = calculateScenario(
-    resolveInputs(process, { hourlyCost: seedCo.hourlyCost, processingMinutesOverride: null, errorRateOverride: null, monthlyVolume: seedCo.volume, residualEffortOnAutomated: 0.1, automationErrorReduction: 0.7, roiHorizonMonths: 36, avgInvoiceValue: 0, discountEligibleShare: 0, discountRate: 0, discountCapturedToday: 0, capacityRealisation: 1, rampUpMonths: 0, wacc: 0.08 }),
+    resolveInputs(process, { hourlyCost: seedCo.hourlyCost, processingMinutesOverride: null, errorRateOverride: null, monthlyVolume: seedCo.volume, residualEffortOnAutomated: 0.1, automationErrorReduction: 0.7, roiHorizonMonths: 36, avgInvoiceValue: 0, discountEligibleShare: 0, discountRate: 0, discountCapturedToday: 0, capacityRealisation: 1, rampUpMonths: 0, wacc: 0.08, discountDaysEarlier: 20 }),
     defaultScenarios()[0],
   );
   const costPerInvoice = r.currentCostPerInvoice ?? 0;
@@ -327,6 +327,7 @@ export function createDemoProject(companyId: DemoCompanyId = "nordwerk", referen
       capacityRealisation: 1,
       rampUpMonths: 0,
       wacc: 0.08,
+      discountDaysEarlier: 20,
     },
     scenarios: defaultScenarios(seedCo.scale),
     selectedScenario: "automation",
