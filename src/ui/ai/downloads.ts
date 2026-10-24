@@ -20,12 +20,13 @@ export async function canSaveFiles(): Promise<boolean> {
 }
 
 /** Resolves true when the file was handed to the browser / viewer, false when the viewer declined. */
-export async function saveFile(filename: string, data: string, mime: string): Promise<boolean> {
+export async function saveFile(filename: string, data: string | Uint8Array | Blob, mime: string): Promise<boolean> {
+  const blob = data instanceof Blob ? data : new Blob([data as BlobPart], { type: mime });
   if (__RESTRICTED_HOST__) {
     const d = await downloadsCapability();
     if (!d) throw new Error("Saving files is not available in this view.");
     try {
-      await d.save({ filename, data });
+      await d.save({ filename, data: typeof data === "string" ? data : blob });
       return true;
     } catch (e) {
       const code = (e as { code?: string })?.code;
@@ -33,7 +34,7 @@ export async function saveFile(filename: string, data: string, mime: string): Pr
       throw new Error((e as { message?: string })?.message || "The file could not be saved.");
     }
   }
-  const url = URL.createObjectURL(new Blob([data], { type: mime }));
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;

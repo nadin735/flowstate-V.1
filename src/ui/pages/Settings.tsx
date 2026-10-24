@@ -125,8 +125,10 @@ export function SettingsPage() {
           </dl>
           <div className="btn-col">
             <Button icon={<LuSave />} onClick={async () => { await saveNow(); toast({ tone: "success", title: "Project saved" }); }} disabled={mode === "memory"}>Save now</Button>
-            {canSave && <Button icon={<LuDownload />} onClick={exportJson}>Export project (JSON)</Button>}
-            <Button icon={<LuUpload />} onClick={() => fileRef.current?.click()}>Import project…</Button>
+            <Button variant="primary" icon={<LuDownload />} onClick={() => { location.hash = "#/report"; }}>Results as PDF (Report)</Button>
+            {canSave && <Button icon={<LuDownload />} onClick={exportJson}>Save project file (backup)</Button>}
+            <Button icon={<LuUpload />} onClick={() => fileRef.current?.click()}>Open project file…</Button>
+            <p className="small muted">The project file is a data backup to reopen in FLOWSTATE later, not a readable document. To read or share your results, use the PDF from the Report page.</p>
             <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={onFile} />
             <Button onClick={() => { location.hash = "#/welcome"; }}>Show welcome screen</Button>
             <Button onClick={() => setConfirm({ kind: "test" })}>Load test data</Button>

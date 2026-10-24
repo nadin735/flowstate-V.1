@@ -26,18 +26,20 @@ export function ReportPage() {
   const longestWait = [...p.process.steps].sort((a, b) => b.waitDays - a.waitDays)[0];
   const healthText = { "no-plan": "not yet planned", "on-track": "on track", "at-risk": "at risk", "off-track": "off track" }[health.health];
 
-  const downloadHtml = async () => {
-    if (!ref.current) return;
-    // Light theme, inline styles: the file must look right when opened on its own or printed.
-    // @font-face rules point at /fonts on this site and would 404 in a standalone file; the font stack falls back to system fonts.
-    const css = Array.from(document.querySelectorAll("style")).map((x) => x.textContent).join("\n").replace(/@font-face\s*\{[^}]*\}/g, "");
-    const html = `<!doctype html><html lang="en" data-mode="light" data-accent="${p.preferences.accent}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${(p.name || "Report").replace(/[<>&]/g, "")} — FLOWSTATE report</title><style>${css}</style></head><body class="report-standalone">${ref.current.outerHTML}</body></html>`;
-    const name = `flowstate-report-${today}.html`;
+  const [busy, setBusy] = React.useState(false);
+  const downloadPdf = async () => {
+    if (!ref.current || busy) return;
+    setBusy(true);
+    const name = `flowstate-report-${today}.pdf`;
     try {
-      const ok = await saveFile(name, html, "text/html");
-      if (ok) toast({ tone: "success", title: "Report saved", body: `${name} — open it in a browser and use Print → Save as PDF for a PDF.` });
+      const { reportToPdf } = await import("../report/pdf");
+      const bytes = await reportToPdf(ref.current, { title: `${p.name || "Transformation report"} — FLOWSTATE`, subtitle: p.company.name || undefined });
+      const ok = await saveFile(name, bytes, "application/pdf");
+      if (ok) toast({ tone: "success", title: "PDF saved", body: `${name} — opens in any PDF viewer, also on your phone.` });
     } catch (e) {
-      toast({ tone: "error", title: "Report could not be saved", body: e instanceof Error ? e.message : undefined });
+      toast({ tone: "error", title: "PDF could not be created", body: e instanceof Error ? e.message : undefined });
+    } finally {
+      setBusy(false);
     }
   };
   const [canSave, setCanSave] = React.useState(!__RESTRICTED_HOST__);
@@ -51,12 +53,12 @@ export function ReportPage() {
         <PageHeader
           eyebrow="Report"
           title="Transformation report"
-          description={__RESTRICTED_HOST__ ? "A complete summary of the current project. Download it as a self-contained file; open it in any browser and print it to PDF." : "A print-ready summary generated from the current project state. Use your browser’s “Save as PDF” in the print dialog to create a PDF."}
+          description="A complete summary of the current project. Download it as a PDF to read, share or print — it opens in any PDF viewer, also on your phone."
           actions={__RESTRICTED_HOST__ ? (
-            canSave ? <Button variant="primary" icon={<LuDownload />} onClick={downloadHtml}>Download report</Button> : <span className="small muted export-note">Saving files is not available in this view. Run the full app (<code>npm start</code>) to export.</span>
+            canSave ? <Button variant="primary" icon={<LuDownload />} onClick={downloadPdf} disabled={busy}>{busy ? "Creating PDF…" : "Download PDF"}</Button> : <span className="small muted export-note">Saving files is not available in this view. Run the full app (<code>npm start</code>) to export.</span>
           ) : <>
-            <Button icon={<LuDownload />} onClick={downloadHtml}>Download HTML</Button>
-            <Button variant="primary" icon={<LuPrinter />} onClick={() => window.print()}>Print / Save as PDF</Button>
+            <Button variant="primary" icon={<LuDownload />} onClick={downloadPdf} disabled={busy}>{busy ? "Creating PDF…" : "Download PDF"}</Button>
+            <Button icon={<LuPrinter />} onClick={() => window.print()}>Print</Button>
           </>}
         />
       </div>
