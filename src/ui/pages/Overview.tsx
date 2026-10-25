@@ -11,6 +11,7 @@ import { setupStatus } from "../../domain/template";
 import { PdfUploadHero } from "../components/PdfImport";
 import { DataIntake } from "../components/DataIntake";
 import { BenchmarkCard } from "../components/BenchmarkCard";
+import { FocusCockpit } from "../components/FocusCockpit";
 import { isIntakeSkipped, setIntakeSkipped } from "../state/onboarding";
 
 export function HealthBadge({ health }: { health: "no-plan" | "on-track" | "at-risk" | "off-track" }) {
@@ -61,6 +62,8 @@ export function OverviewPage() {
       />
 
       {setupStatus(p).ready && <><PdfUploadHero compact /><SetupCard /></>}
+
+      {setupStatus(p).ready && <FocusCockpit />}
 
       <div className="stat-grid">
         <Stat label="Monthly process cost" value={fmt.eur(r.currentMonthlyCost)} tag={<DataTag kind="estimate" />} sub={`${fmt.num(p.process.monthlyVolume)} invoices · ${fmt.eur(p.assumptions.hourlyCost)}/h`} />
