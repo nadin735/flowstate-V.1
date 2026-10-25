@@ -74,6 +74,7 @@ if (single) {
   await build({ ...common, outdir: "dist", entryNames: "app", chunkNames: "chunks/[name]-[hash]", splitting: true, sourcemap: true, define: { ...common.define, __RESTRICTED_HOST__: "false" } });
   await copyFile("public/index.html", "dist/index.html");
   await cp("public/fonts", "dist/fonts", { recursive: true });
+  await copyFile("public/og.png", "dist/og.png");
   await copyFile("THIRD_PARTY_NOTICES.txt", "dist/third-party-notices.txt");
 }
 
