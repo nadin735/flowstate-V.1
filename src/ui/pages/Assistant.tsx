@@ -4,6 +4,7 @@ import { useStore } from "../state/store";
 import { Button, Card, DataTag, PageHeader, cx } from "../components/ui";
 import { QUESTIONS, answer, type Answer, type QuestionId } from "../../domain/assistant";
 import { navigate } from "../app";
+import { GoalCoach } from "../components/GoalCoach";
 import { claudeSample, sampleErrorMessage } from "../ai/claude";
 
 interface Turn { q: string; a: Answer | null; text?: string; model?: string }
@@ -48,6 +49,8 @@ export function AssistantPage() {
   return (
     <div className="page">
       <PageHeader eyebrow="Assistant" title="Ask your project" description={<>Short answers built from your own numbers: process map, selected scenario and roadmap. Figures are <DataTag kind="estimate" /> calculated from your inputs.</>} />
+      <GoalCoach />
+      <h2 className="coach-qa-title">Ask a question</h2>
       <div className="grid-consult">
         <Card title="Questions" subtitle="Pick one. The answer shows where the numbers come from.">
           <div className="ask-list">

@@ -1,7 +1,7 @@
 import React from "react";
-import { LuScanLine, LuArrowRight, LuCalculator, LuFileText, LuSparkles, LuTriangleAlert, LuCircleCheck } from "react-icons/lu";
+import { LuScanLine, LuArrowRight, LuCalculator, LuFileText, LuSparkles, LuTriangleAlert, LuCircleCheck, LuChevronDown } from "react-icons/lu";
 import { useStore } from "../state/store";
-import { Badge, Button, Card, DataTag, PageHeader, Progress, Stat, Empty, Segmented } from "../components/ui";
+import { Badge, Button, Card, DataTag, PageHeader, Progress, Stat, Empty } from "../components/ui";
 import { HBars, Ring } from "../components/charts";
 import { fmt } from "../format";
 import { processBaseline, resolveInputs, sensitivity, stepMetrics } from "../../domain/finance";
@@ -19,10 +19,24 @@ export function HealthBadge({ health }: { health: "no-plan" | "on-track" | "at-r
   return <Badge tone={map[health][1]} dot>{map[health][0]}</Badge>;
 }
 
+/** Full width section bar: a header row with the headline figures, expandable to its content. */
+function Band({ id, title, chips, openDefault, children }: { id: string; title: string; chips: string[]; openDefault?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(!!openDefault);
+  return (
+    <section className={`band${open ? " band-open" : ""}`} aria-labelledby={`band-${id}`}>
+      <button type="button" className="band-head" aria-expanded={open} aria-controls={`band-body-${id}`} onClick={() => setOpen((o) => !o)}>
+        <span className="band-title" id={`band-${id}`}>{title}</span>
+        <span className="band-chips">{chips.map((c) => <span key={c} className="band-chip">{c}</span>)}</span>
+        <LuChevronDown className="band-caret" aria-hidden />
+      </button>
+      {open && <div className="band-body" id={`band-body-${id}`}>{children}</div>}
+    </section>
+  );
+}
+
 export function OverviewPage() {
   const { project: p, results, selectedResult: r, today, dispatch } = useStore();
   const [skipped, setSkipped] = React.useState(isIntakeSkipped);
-  const [tab, setTab] = React.useState<"summary" | "cost" | "next">("summary");
   if (!setupStatus(p).ready && !skipped) {
     return (
       <div className="page">
@@ -69,15 +83,8 @@ export function OverviewPage() {
         <Stat tone="accent" label="Est. annual net savings" value={fmt.eur(r.annualNetSavings)} tag={<DataTag kind="estimate" />} sub={<>{r.discountBenefit > 0 && <>incl. {fmt.eurCompact(r.discountBenefit * 12)} early-payment discounts<br /></>}Range {fmt.eurCompact(range[0].result.annualNetSavings)} – {fmt.eurCompact(range[2].result.annualNetSavings)} · payback {fmt.months(r.paybackFromStartMonths)} from start</>} />
       </div>
 
-      <div className="overview-tabs">
-        <Segmented label="Overview section" value={tab} onChange={setTab} options={[
-          { value: "summary", label: "Summary" },
-          { value: "cost", label: "Cost drivers" },
-          { value: "next", label: "Next steps and activity" },
-        ]} />
-      </div>
-
-      {tab === "summary" && <div className="grid-3-2">
+      <Band id="case" title="Business case and project health" chips={[`${fmt.eurCompact(r.annualNetSavings)} net per year`, `Payback ${fmt.months(r.paybackFromStartMonths)}`, health.health === "no-plan" ? "No plan yet" : `Progress ${Math.round(health.progress * 100)} %`]} openDefault>
+      <div className="grid-3-2">
         <Card title="Before vs. after" subtitle={`Baseline vs. “${scen.name}” target state`} actions={<DataTag kind="estimate" />}>
           <table className="table compare-table">
             <thead><tr><th>Metric</th><th className="num">Today</th><th className="num">Target</th><th className="num">Change</th></tr></thead>
@@ -130,9 +137,11 @@ export function OverviewPage() {
           </ul>
           <Button size="sm" variant="ghost" onClick={() => navigate("roadmap")}>Open roadmap <LuArrowRight aria-hidden /></Button>
         </Card>
-      </div>}
+      </div>
+      </Band>
 
-      {tab === "cost" && <>
+      <Band id="cost" title="Cost drivers and benchmark" chips={[`${fmt.eur(r.currentMonthlyCost)} per month today`, `${metrics.filter((m) => m.isBottleneck).length} bottleneck${metrics.filter((m) => m.isBottleneck).length === 1 ? "" : "s"}`]}>
+      <>
       <BenchmarkCard values={{
         targetName: scen.name,
         today: { costPerInvoice: r.currentCostPerInvoice ?? 0, cycleTimeDays: r.currentCycleTimeDays, automationRate: base.automationRate, exceptionRate: r.currentErrorRate },
@@ -148,10 +157,16 @@ export function OverviewPage() {
             })}
           />
         </Card>
-      </>}
+      </>
+      </Band>
 
-      {tab === "next" && <>
-      {setupStatus(p).ready && <><FocusCockpit /><PdfUploadHero compact /><SetupCard /></>}
+      {setupStatus(p).ready && (
+        <Band id="focus" title="Focus, data and setup" chips={["Today's focus", "PDF import"]}>
+          <><FocusCockpit /><PdfUploadHero compact /><SetupCard /></>
+        </Band>
+      )}
+
+      <Band id="next" title="Recommendations and activity" chips={[lastRun ? `${lastRun.items.length} recommendations` : "No recommendations yet", `${p.activity.length} changes logged`]}>
       <div className="grid-2">
         <Card title="Recent recommendations" actions={<Button size="sm" variant="ghost" icon={<LuSparkles />} onClick={() => navigate("consultant")}>Consultant</Button>}>
           {lastRun ? (
@@ -180,7 +195,7 @@ export function OverviewPage() {
           </ul>
         </Card>
       </div>
-      </>}
+      </Band>
     </div>
   );
 }
