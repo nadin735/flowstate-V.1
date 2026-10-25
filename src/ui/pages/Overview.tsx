@@ -1,7 +1,7 @@
 import React from "react";
 import { LuScanLine, LuArrowRight, LuCalculator, LuFileText, LuSparkles, LuTriangleAlert, LuCircleCheck } from "react-icons/lu";
 import { useStore } from "../state/store";
-import { Badge, Button, Card, DataTag, PageHeader, Progress, Stat, Empty } from "../components/ui";
+import { Badge, Button, Card, DataTag, PageHeader, Progress, Stat, Empty, Segmented } from "../components/ui";
 import { HBars, Ring } from "../components/charts";
 import { fmt } from "../format";
 import { processBaseline, resolveInputs, sensitivity, stepMetrics } from "../../domain/finance";
@@ -22,6 +22,7 @@ export function HealthBadge({ health }: { health: "no-plan" | "on-track" | "at-r
 export function OverviewPage() {
   const { project: p, results, selectedResult: r, today, dispatch } = useStore();
   const [skipped, setSkipped] = React.useState(isIntakeSkipped);
+  const [tab, setTab] = React.useState<"summary" | "cost" | "next">("summary");
   if (!setupStatus(p).ready && !skipped) {
     return (
       <div className="page">
@@ -61,10 +62,6 @@ export function OverviewPage() {
         </>}
       />
 
-      {setupStatus(p).ready && <><PdfUploadHero compact /><SetupCard /></>}
-
-      {setupStatus(p).ready && <FocusCockpit />}
-
       <div className="stat-grid">
         <Stat label="Monthly process cost" value={fmt.eur(r.currentMonthlyCost)} tag={<DataTag kind="estimate" />} sub={`${fmt.num(p.process.monthlyVolume)} invoices · ${fmt.eur(p.assumptions.hourlyCost)}/h`} />
         <Stat label="Avg. processing time" value={`${fmt.num(r.currentMinutesPerInvoice, 1)} min`} tag={<DataTag kind="input" />} sub={`${fmt.num(base.cycleTimeDays, 1)} business days end-to-end`} />
@@ -72,7 +69,15 @@ export function OverviewPage() {
         <Stat tone="accent" label="Est. annual net savings" value={fmt.eur(r.annualNetSavings)} tag={<DataTag kind="estimate" />} sub={<>{r.discountBenefit > 0 && <>incl. {fmt.eurCompact(r.discountBenefit * 12)} early-payment discounts<br /></>}Range {fmt.eurCompact(range[0].result.annualNetSavings)} – {fmt.eurCompact(range[2].result.annualNetSavings)} · payback {fmt.months(r.paybackFromStartMonths)} from start</>} />
       </div>
 
-      <div className="grid-3-2">
+      <div className="overview-tabs">
+        <Segmented label="Overview section" value={tab} onChange={setTab} options={[
+          { value: "summary", label: "Summary" },
+          { value: "cost", label: "Cost drivers" },
+          { value: "next", label: "Next steps and activity" },
+        ]} />
+      </div>
+
+      {tab === "summary" && <div className="grid-3-2">
         <Card title="Before vs. after" subtitle={`Baseline vs. “${scen.name}” target state`} actions={<DataTag kind="estimate" />}>
           <table className="table compare-table">
             <thead><tr><th>Metric</th><th className="num">Today</th><th className="num">Target</th><th className="num">Change</th></tr></thead>
@@ -125,16 +130,16 @@ export function OverviewPage() {
           </ul>
           <Button size="sm" variant="ghost" onClick={() => navigate("roadmap")}>Open roadmap <LuArrowRight aria-hidden /></Button>
         </Card>
-      </div>
+      </div>}
 
+      {tab === "cost" && <>
       <BenchmarkCard values={{
         targetName: scen.name,
         today: { costPerInvoice: r.currentCostPerInvoice ?? 0, cycleTimeDays: r.currentCycleTimeDays, automationRate: base.automationRate, exceptionRate: r.currentErrorRate },
         target: { costPerInvoice: r.futureCostPerInvoice ?? 0, cycleTimeDays: r.futureCycleTimeDays, automationRate: targetAutomation, exceptionRate: r.futureErrorRate },
       }} />
 
-      <div className="grid-2">
-        <Card title="Where the cost sits" subtitle="Monthly labour cost per process step incl. rework" actions={<DataTag kind="estimate" />}>
+      <Card title="Where the cost sits" subtitle="Monthly labour cost per process step incl. rework" actions={<DataTag kind="estimate" />}>
           <HBars
             format={(n) => fmt.eur(n)}
             rows={metrics.map((m) => {
@@ -143,7 +148,11 @@ export function OverviewPage() {
             })}
           />
         </Card>
+      </>}
 
+      {tab === "next" && <>
+      {setupStatus(p).ready && <><FocusCockpit /><PdfUploadHero compact /><SetupCard /></>}
+      <div className="grid-2">
         <Card title="Recent recommendations" actions={<Button size="sm" variant="ghost" icon={<LuSparkles />} onClick={() => navigate("consultant")}>Consultant</Button>}>
           {lastRun ? (
             <ul className="rec-mini-list">
@@ -171,6 +180,7 @@ export function OverviewPage() {
           </ul>
         </Card>
       </div>
+      </>}
     </div>
   );
 }

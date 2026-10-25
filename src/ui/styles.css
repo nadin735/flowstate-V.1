@@ -1262,3 +1262,4 @@ body:has(.modal-backdrop) .toasts { top: 20px; bottom: auto; }
 .idea-done{opacity:.75}.idea-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .ws-empty{margin-bottom:12px}
 @media(max-width:900px){.ws-layout{grid-template-columns:1fr}.ws-cols{grid-template-columns:1fr}}
+.overview-tabs { margin: 4px 0 16px; }
