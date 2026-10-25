@@ -88,7 +88,7 @@ export function ReportPage() {
             The investment pays back <b>{fmt.months(r.paybackFromStartMonths)}</b> after project start ({fmt.months(r.paybackMonths)} after go-live, with a {p.assumptions.rampUpMonths}-month ramp-up). NPV over {r.roiHorizonMonths} months at {fmt.pct(p.assumptions.wacc)} WACC: <b>{fmt.eur(r.npv)}</b>; ROI {fmt.pct(r.roiFirstYear)} in the first 12 months after go-live.
             Handling time per invoice falls by an estimated {fmt.pct(r.processingTimeReduction)} and errors by {fmt.pct(r.errorReduction)}.
           </p>
-          <p>The project is <b>{healthText}</b> at {fmt.pct(health.progress)} completion (planned: {fmt.pct(health.plannedProgress)}){health.reasons.length ? ` — ${health.reasons.join(", ")}` : ""}.</p>
+          <p>{health.health === "no-plan" ? <>No delivery plan yet{health.reasons.length ? ` — ${health.reasons.join(", ")}` : ""}.</> : <>The project is <b>{healthText}</b> at {fmt.pct(health.progress)} completion (planned: {fmt.pct(health.plannedProgress)}){health.reasons.length ? ` — ${health.reasons.join(", ")}` : ""}.</>}</p>
         </section>
 
         <section>
