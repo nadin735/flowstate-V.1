@@ -144,7 +144,7 @@ function Shell() {
           <SaveIndicator />
           <button className="end-session" onClick={() => setConfirmEnd(true)}><LuLogOut aria-hidden /> End session & delete data</button>
           <div className="demo-note">Session data · deleted when the session ends</div>
-          <div className="legal-foot"><a href="#/impressum">Impressum</a> · <a href="#/datenschutz">Datenschutz</a></div>
+          <div className="legal-foot"><a href="#/impressum">Impressum</a> · <a href="#/datenschutz">Datenschutz</a> · <a href="https://nadin.dev">nadin.dev</a></div>
         </div>
       </aside>
       {navOpen && <div className="scrim" onClick={() => setNavOpen(false)} />}
