@@ -1,6 +1,6 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- *  IMPRESSUM & DATENSCHUTZ, NUR DIESE 4 ANGABEN EINTRAGEN
+ *  IMPRESSUM & DATENSCHUTZ
  * ─────────────────────────────────────────────────────────────────────────────
  * FLOWSTATE ist ein privates, nicht-kommerzielles Bewerbungsprojekt. Dafür reicht
  * eine Anbieterkennzeichnung nach § 18 Abs. 1 MStV (Name + Anschrift) plus E-Mail.
@@ -11,8 +11,8 @@ export const LEGAL = {
   /** Vor- und Nachname. */
   name: "Nadin Okil",
   /** Ladungsfähige Anschrift (kein Postfach). */
-  street: "TODO: Straße Hausnummer",
-  postalCodeCity: "TODO: PLZ Ort",
+  street: "",
+  postalCodeCity: "",
   /** Kontakt-E-Mail. */
   email: "nadinokil.contact@gmail.com",
   country: "Deutschland",

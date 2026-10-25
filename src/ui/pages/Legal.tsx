@@ -43,8 +43,8 @@ function Address() {
   return (
     <p>
       <Val v={LEGAL.name} /><br />
-      <Val v={LEGAL.street} /><br />
-      <Val v={LEGAL.postalCodeCity} /><br />
+      {LEGAL.street ? <><Val v={LEGAL.street} /><br /></> : null}
+      {LEGAL.postalCodeCity ? <><Val v={LEGAL.postalCodeCity} /><br /></> : null}
       {LEGAL.country}<br />
       E-Mail: <Val v={LEGAL.email} />
     </p>
