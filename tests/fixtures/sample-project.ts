@@ -338,6 +338,7 @@ export function createDemoProject(companyId: DemoCompanyId = "nordwerk", referen
     milestones: roadmap.milestones,
     risks: roadmap.risks,
     kpis: buildKpis(seedCo, reference),
+    ideas: [],
     activity: [
       { id: "a3", at: addDays(reference, -2) + "T09:12:00Z", text: "Approval matrix workshop held with 14 cost-centre owners", kind: "task" },
       { id: "a2", at: addDays(reference, -9) + "T15:40:00Z", text: "Target process (to-be BPMN) approved by steering committee", kind: "process" },

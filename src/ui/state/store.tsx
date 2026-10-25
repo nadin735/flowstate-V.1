@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import type { Activity, Assumptions, Company, KpiMeasurement, Milestone, Phase, Preferences, ProcessStep, Project, Recommendation, RecommendationRun, Risk, Scenario, Task } from "../../domain/types";
+import type { Activity, Assumptions, Company, Idea, KpiMeasurement, Milestone, Phase, Preferences, ProcessStep, Project, Recommendation, RecommendationRun, Risk, Scenario, Task } from "../../domain/types";
 import { benchmarkScenarios, createEmptyProject, emptyScenarios, scenariosAreEmpty, starterRoadmap, STEP_TEMPLATES } from "../../domain/template";
 import { todayISO, addDays } from "../../domain/dates";
 import { calculateAll, type ScenarioResult } from "../../domain/finance";
@@ -33,6 +33,10 @@ export type Action =
   | { type: "deleteRisk"; id: string }
   | { type: "updatePhase"; id: string; patch: Partial<Phase> }
   | { type: "updateMilestone"; id: string; patch: Partial<Milestone> }
+  | { type: "addIdea"; idea: Idea }
+  | { type: "updateIdea"; id: string; patch: Partial<Idea> }
+  | { type: "deleteIdea"; id: string }
+  | { type: "promoteIdea"; id: string }
   | { type: "upsertKpi"; kpi: KpiMeasurement }
   | { type: "deleteKpi"; month: string }
   | { type: "updateCompany"; patch: Partial<Company> }
@@ -137,6 +141,22 @@ function reducer(p: Project, a: Action): Project {
       return touch({ ...p, phases: p.phases.map((ph) => (ph.id === a.id ? { ...ph, ...a.patch } : ph)) });
     case "updateMilestone":
       return touch({ ...p, milestones: p.milestones.map((m) => (m.id === a.id ? { ...m, ...a.patch } : m)) });
+    case "addIdea":
+      return touch({ ...p, ideas: [a.idea, ...p.ideas].slice(0, 100), activity: log(p, `Idea added: ${a.idea.title}`, "system") });
+    case "updateIdea":
+      return touch({ ...p, ideas: p.ideas.map((i) => (i.id === a.id ? { ...i, ...a.patch } : i)) });
+    case "deleteIdea":
+      return touch({ ...p, ideas: p.ideas.filter((i) => i.id !== a.id) });
+    case "promoteIdea": {
+      const idea = p.ideas.find((i) => i.id === a.id);
+      if (!idea || idea.stage === "promoted" || p.phases.length === 0) return p;
+      const phase = [...p.phases].sort((x, y) => x.order - y.order).find((ph) => ph.end >= todayISO()) ?? p.phases[p.phases.length - 1];
+      const task: Task = {
+        id: uid("t"), phaseId: phase.id, title: idea.title.slice(0, 120), owner: p.lead.trim() || "Unassigned",
+        status: "todo", priority: "medium", risk: "low", start: phase.start, due: phase.end, dependsOn: [], budget: 0, effortDays: 1,
+      };
+      return touch({ ...p, ideas: p.ideas.map((i) => (i.id === a.id ? { ...i, stage: "promoted" } : i)), tasks: [...p.tasks, task], activity: log(p, `Idea “${idea.title}” moved to roadmap`, "task") });
+    }
     case "upsertKpi": {
       const kpis = [...p.kpis.filter((k) => k.month !== a.kpi.month), a.kpi].sort((x, y) => x.month.localeCompare(y.month)).slice(-60);
       return touch({ ...p, kpis, activity: log(p, `KPI measurement recorded for ${a.kpi.month}`, "system") });

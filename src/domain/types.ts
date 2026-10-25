@@ -243,6 +243,21 @@ export const PreferencesSchema = z.object({
 });
 export type Preferences = z.infer<typeof PreferencesSchema>;
 
+export const IdeaStage = z.enum(["inbox", "exploring", "promoted"]);
+export type IdeaStage = z.infer<typeof IdeaStage>;
+
+/** A free-form idea captured in the Creative Workspace. */
+export const IdeaSchema = z.object({
+  id,
+  title: z.string().min(2, "Title needs at least 2 characters").max(120),
+  note: z.string().max(600),
+  /** Process step the idea relates to, if any. */
+  stepId: z.string().max(64).nullable(),
+  stage: IdeaStage,
+  createdAt: z.string(),
+});
+export type Idea = z.infer<typeof IdeaSchema>;
+
 export const ProjectSchema = z.object({
   schemaVersion: z.literal(1),
   id,
@@ -265,6 +280,7 @@ export const ProjectSchema = z.object({
   milestones: z.array(MilestoneSchema).max(40),
   risks: z.array(RiskSchema).max(60),
   kpis: z.array(KpiMeasurementSchema).max(60),
+  ideas: z.array(IdeaSchema).max(100).default([]),
   activity: z.array(ActivitySchema).max(80),
   preferences: PreferencesSchema,
   updatedAt: z.string(),

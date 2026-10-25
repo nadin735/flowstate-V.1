@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LuMoon, LuSun, LuLogOut, LuLayoutDashboard, LuWorkflow, LuSparkles, LuCalculator, LuChartGantt, LuChartLine, LuSettings, LuFileText, LuMenu, LuX, LuCloud, LuHardDrive, LuCircleAlert, LuLoaderCircle, LuCheck, LuFlaskConical } from "react-icons/lu";
+import { LuMessageCircleQuestion, LuLightbulb, LuMoon, LuSun, LuLogOut, LuLayoutDashboard, LuWorkflow, LuSparkles, LuCalculator, LuChartGantt, LuChartLine, LuSettings, LuFileText, LuMenu, LuX, LuCloud, LuHardDrive, LuCircleAlert, LuLoaderCircle, LuCheck, LuFlaskConical } from "react-icons/lu";
 import { StoreProvider, isTestData, useStore } from "./state/store";
 import { Confirm, Toasts, cx } from "./components/ui";
 import { useResolvedColorMode } from "./state/colorMode";
@@ -12,14 +12,18 @@ import { AnalyticsPage } from "./pages/Analytics";
 import { SettingsPage } from "./pages/Settings";
 import { ReportPage } from "./pages/Report";
 import { LegalPage } from "./pages/Legal";
+import { AssistantPage } from "./pages/Assistant";
+import { WorkspacePage } from "./pages/Workspace";
 import { WelcomePage } from "./pages/Welcome";
 
-export type Route = "welcome" | "impressum" | "datenschutz" | "overview" | "process" | "consultant" | "simulator" | "roadmap" | "analytics" | "settings" | "report";
+export type Route = "welcome" | "impressum" | "datenschutz" | "overview" | "process" | "consultant" | "simulator" | "roadmap" | "analytics" | "settings" | "report" | "assistant" | "workspace";
 
 const NAV: { id: Route; label: string; icon: React.ReactNode; group: string }[] = [
   { id: "overview", label: "Executive Overview", icon: <LuLayoutDashboard />, group: "Analyze" },
   { id: "process", label: "Process Intelligence", icon: <LuWorkflow />, group: "Analyze" },
   { id: "consultant", label: "Transformation Consultant", icon: <LuSparkles />, group: "Design" },
+  { id: "assistant", label: "Assistant", icon: <LuMessageCircleQuestion />, group: "Design" },
+  { id: "workspace", label: "Creative Workspace", icon: <LuLightbulb />, group: "Design" },
   { id: "simulator", label: "Scenario Simulator", icon: <LuCalculator />, group: "Design" },
   { id: "roadmap", label: "Transformation Roadmap", icon: <LuChartGantt />, group: "Deliver" },
   { id: "analytics", label: "KPI & Impact", icon: <LuChartLine />, group: "Deliver" },
@@ -103,7 +107,7 @@ function Shell() {
   }
 
   const groups = Array.from(new Set(NAV.map((n) => n.group)));
-  const Page = { overview: OverviewPage, process: ProcessPage, consultant: ConsultantPage, simulator: SimulatorPage, roadmap: RoadmapPage, analytics: AnalyticsPage, settings: SettingsPage, report: ReportPage }[route];
+  const Page = { overview: OverviewPage, process: ProcessPage, consultant: ConsultantPage, assistant: AssistantPage, workspace: WorkspacePage, simulator: SimulatorPage, roadmap: RoadmapPage, analytics: AnalyticsPage, settings: SettingsPage, report: ReportPage }[route];
 
   return (
     <div className={cx("shell", project.preferences.density === "compact" && "density-compact")}>

@@ -86,6 +86,7 @@ export function createEmptyProject(today: string = todayISO()): Project {
     milestones,
     risks: [],
     kpis: [],
+    ideas: [],
     activity: [],
     preferences: { locale: "en-GB", density: "comfortable", showFormulas: true, asOfDate: null, accent: "electric", colorMode: "system", onboarded: false },
     updatedAt: new Date().toISOString(),
