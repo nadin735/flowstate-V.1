@@ -42,7 +42,7 @@ export interface KpiSummary {
 }
 
 function valueOf(m: KpiMeasurement, key: KpiKey, baselineMonthlyCost: number, startMonth = ""): number {
-  // Savings only count once the project has started — earlier differences are normal month-to-month noise.
+  // Savings only count once the project has started, earlier differences are normal month-to-month noise.
   if (key === "monthlySavings") return m.month < startMonth ? 0 : Math.max(0, baselineMonthlyCost - m.costPerInvoice * m.volume);
   return m[key];
 }

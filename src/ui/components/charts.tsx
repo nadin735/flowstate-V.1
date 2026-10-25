@@ -83,7 +83,7 @@ export function LineChart({
             <text x={m.l - 8} y={y(t.value)} dy="0.32em" textAnchor="end" className="chart-axis">{t.label}</text>
           </g>
         ))}
-        {flat && <text x={(m.l + width - m.r) / 2} y={height / 2 - 10} textAnchor="middle" className="chart-empty">No values yet — enter process data and scenario levers</text>}
+        {flat && <text x={(m.l + width - m.r) / 2} y={height / 2 - 10} textAnchor="middle" className="chart-empty">No values yet, enter process data and scenario levers</text>}
         {labels.map((l, i) => i % every === 0 && (
           <text key={i} x={xi(i)} y={height - 8} textAnchor="middle" className="chart-axis">{l}</text>
         ))}

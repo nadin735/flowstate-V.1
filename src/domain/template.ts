@@ -1,6 +1,6 @@
 /**
- * Empty project template. Contains structure only — the five invoice-processing
- * steps, the three scenario types and the five roadmap phases — and no company
+ * Empty project template. Contains structure only, the five invoice-processing
+ * steps, the three scenario types and the five roadmap phases, and no company
  * data, figures, tasks, risks or measurements. Everything else is entered by the user.
  */
 import { addDays, diffDays, todayISO } from "./dates";

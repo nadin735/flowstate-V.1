@@ -10,12 +10,12 @@ import { execFileSync } from "node:child_process";
 const OUT = ".vercel/output";
 await rm(OUT, { recursive: true, force: true });
 
-// 1) Client — reuse the normal build.
+// 1) Client, reuse the normal build.
 execFileSync(process.execPath, ["scripts/build.mjs"], { stdio: "inherit" });
 await mkdir(`${OUT}/static`, { recursive: true });
 await cp("dist", `${OUT}/static`, { recursive: true, filter: (src) => !src.endsWith(".map") && !/flowstate-(standalone|preview)\.html$/.test(src) });
 
-// 2) Functions — one self-contained bundle each (zod + domain layer inlined).
+// 2) Functions, one self-contained bundle each (zod + domain layer inlined).
 const routes = { health: "health", "ai/status": "ai-status", recommendations: "recommendations", extract: "extract" };
 for (const [path, route] of Object.entries(routes)) {
   const dir = `${OUT}/functions/api/${path}.func`;

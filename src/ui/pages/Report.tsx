@@ -33,9 +33,9 @@ export function ReportPage() {
     const name = `flowstate-report-${today}.pdf`;
     try {
       const { reportToPdf } = await import("../report/pdf");
-      const bytes = await reportToPdf(ref.current, { title: `${p.name || "Transformation report"} — FLOWSTATE`, subtitle: p.company.name || undefined });
+      const bytes = await reportToPdf(ref.current, { title: `${p.name || "Transformation report"} | FLOWSTATE`, subtitle: p.company.name || undefined });
       const ok = await saveFile(name, bytes, "application/pdf");
-      if (ok) toast({ tone: "success", title: "PDF saved", body: `${name} — opens in any PDF viewer, also on your phone.` });
+      if (ok) toast({ tone: "success", title: "PDF saved", body: `${name}, opens in any PDF viewer, also on your phone.` });
     } catch (e) {
       toast({ tone: "error", title: "PDF could not be created", body: e instanceof Error ? e.message : undefined });
     } finally {
@@ -53,7 +53,7 @@ export function ReportPage() {
         <PageHeader
           eyebrow="Report"
           title="Transformation report"
-          description="A complete summary of the current project. Download it as a PDF to read, share or print — it opens in any PDF viewer, also on your phone."
+          description="A complete summary of the current project. Download it as a PDF to read, share or print, it opens in any PDF viewer, also on your phone."
           actions={__RESTRICTED_HOST__ ? (
             canSave ? <Button variant="primary" icon={<LuDownload />} onClick={downloadPdf} disabled={busy}>{busy ? "Creating PDF…" : "Download PDF"}</Button> : <span className="small muted export-note">Saving files is not available in this view. Run the full app (<code>npm start</code>) to export.</span>
           ) : <>
@@ -88,7 +88,7 @@ export function ReportPage() {
             The investment pays back <b>{fmt.months(r.paybackFromStartMonths)}</b> after project start ({fmt.months(r.paybackMonths)} after go-live, with a {p.assumptions.rampUpMonths}-month ramp-up). NPV over {r.roiHorizonMonths} months at {fmt.pct(p.assumptions.wacc)} WACC: <b>{fmt.eur(r.npv)}</b>; ROI {fmt.pct(r.roiFirstYear)} in the first 12 months after go-live.
             Handling time per invoice falls by an estimated {fmt.pct(r.processingTimeReduction)} and errors by {fmt.pct(r.errorReduction)}.
           </p>
-          <p>{health.health === "no-plan" ? <>No delivery plan yet{health.reasons.length ? ` — ${health.reasons.join(", ")}` : ""}.</> : <>The project is <b>{healthText}</b> at {fmt.pct(health.progress)} completion (planned: {fmt.pct(health.plannedProgress)}){health.reasons.length ? ` — ${health.reasons.join(", ")}` : ""}.</>}</p>
+          <p>{health.health === "no-plan" ? <>No delivery plan yet{health.reasons.length ? `, ${health.reasons.join(", ")}` : ""}.</> : <>The project is <b>{healthText}</b> at {fmt.pct(health.progress)} completion (planned: {fmt.pct(health.plannedProgress)}){health.reasons.length ? `, ${health.reasons.join(", ")}` : ""}.</>}</p>
         </section>
 
         <section>
@@ -135,7 +135,7 @@ export function ReportPage() {
               <tr><td>Error reduction</td>{results.map((x) => <td key={x.scenarioId} className="num">{fmt.pct(x.errorReduction)}</td>)}</tr>
             </tbody>
           </table>
-          <h3>Sensitivity — {scen.name}</h3>
+          <h3>Sensitivity: {scen.name}</h3>
           <table className="table rp-table">
             <thead><tr><th>Metric</th>{range.map((c) => <th key={c.label} className="num">{c.label}</th>)}</tr></thead>
             <tbody>
@@ -184,7 +184,7 @@ export function ReportPage() {
           <p>Tasks: {p.tasks.filter((t) => t.status === "done").length} done, {p.tasks.filter((t) => t.status === "in_progress").length} in progress, {health.blockedTasks.length} blocked, {health.overdueTasks.length} overdue of {p.tasks.length}. Implementation budget {fmt.eur(health.budgetTotal)}.</p>
           {health.overdueTasks.length > 0 && <ul className="rp-list">{health.overdueTasks.map((t) => <li key={t.id}>Overdue: {t.title} (due {fmt.date(t.due)}, {t.owner})</li>)}</ul>}
           <h3>Top risks</h3>
-          <ul className="rp-list">{p.risks.filter((x) => x.status !== "closed").map((x) => <li key={x.id}><b>{x.title}</b> (P: {x.probability}, I: {x.impact}) — {x.mitigation}</li>)}</ul>
+          <ul className="rp-list">{p.risks.filter((x) => x.status !== "closed").map((x) => <li key={x.id}><b>{x.title}</b> (P: {x.probability}, I: {x.impact}), {x.mitigation}</li>)}</ul>
         </section>
 
         <section>

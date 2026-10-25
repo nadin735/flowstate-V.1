@@ -55,7 +55,7 @@ export function DataIntake({ onSkip }: { onSkip: () => void }) {
     if (avgValue > 0) dispatch({ type: "updateAssumptions", patch: { avgInvoiceValue: avgValue } });
     dispatch({ type: "applyBenchmarks", onlyIfEmpty: true });
     dispatch({ type: "log", text: "Process data entered manually", kind: "process" });
-    toast({ tone: "success", title: "Data saved", body: "Business case calculated with benchmark scenario values — refine them in the Scenario Simulator." });
+    toast({ tone: "success", title: "Data saved", body: "Business case calculated with benchmark scenario values, refine them in the Scenario Simulator." });
   };
 
   const setRow = (id: string, patch: Partial<Row>) => setRows((r) => ({ ...r, [id]: { ...r[id], ...patch } }));
@@ -79,7 +79,7 @@ export function DataIntake({ onSkip }: { onSkip: () => void }) {
           >
             <div className="intake-icon" aria-hidden><LuScanLine /></div>
             <h2>Upload a PDF</h2>
-            <p>A scanned or digital process sheet. FLOWSTATE reads company data, volume, labour cost and every step — you check the values before they are used.</p>
+            <p>A scanned or digital process sheet. FLOWSTATE reads company data, volume, labour cost and every step, you check the values before they are used.</p>
             <div className="intake-actions">
               <Button variant="primary" icon={<LuFileUp />} onClick={() => fileRef.current?.click()}>Upload PDF</Button>
               <Button icon={<LuFileText />} onClick={() => { setPdfStart("demo"); setPdfOpen(true); }}>Try the demo scan</Button>
@@ -90,7 +90,7 @@ export function DataIntake({ onSkip }: { onSkip: () => void }) {
           <section className="intake-card" aria-label="Enter manually">
             <div className="intake-icon intake-icon-muted" aria-hidden><LuKeyboard /></div>
             <h2>Enter manually</h2>
-            <p>One short form: invoices per month, labour cost and the minutes for each of the 5 process steps are required — everything else is optional.</p>
+            <p>One short form: invoices per month, labour cost and the minutes for each of the 5 process steps are required, everything else is optional.</p>
             <div className="intake-actions">
               <Button variant="secondary" icon={<LuKeyboard />} onClick={() => setMode("manual")}>Enter data manually</Button>
             </div>
@@ -104,7 +104,7 @@ export function DataIntake({ onSkip }: { onSkip: () => void }) {
               <TextInput id="in-company" label="Company name (optional)" value={company} maxLength={120} placeholder="e.g. Muster GmbH" onChange={setCompany} />
               <NumberInput id="in-volume" label="Invoices per month *" value={volume} min={0} max={1000000} step={1} onChange={(v) => setVolume(Math.round(v))} hint={tried && !(volume > 0) ? undefined : "Average incoming supplier invoices"} />
               <NumberInput id="in-rate" label="Labour cost per hour *" unit="€" value={rate} min={0} max={500} step={0.5} onChange={setRate} hint="Fully loaded cost of an AP clerk" />
-              <NumberInput id="in-avg" label="Average invoice value (optional)" unit="€" value={avgValue} min={0} max={10000000} step={10} onChange={setAvgValue} hint="Enables the early-payment discount benefit (assumes 30 % of invoices with 2 % terms, 40 % captured today — adjust in the Simulator)" />
+              <NumberInput id="in-avg" label="Average invoice value (optional)" unit="€" value={avgValue} min={0} max={10000000} step={10} onChange={setAvgValue} hint="Enables the early-payment discount benefit (assumes 30 % of invoices with 2 % terms, 40 % captured today, adjust in the Simulator)" />
             </div>
             <div className="table-wrap">
               <table className="table intake-table">

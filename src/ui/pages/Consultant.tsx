@@ -85,7 +85,7 @@ export function ConsultantPage() {
         dispatch({ type: "addRecommendationRun", run: r });
         setRunId(r.id);
         setExcluded([]);
-        toast({ tone: "success", title: `${r.items.length} recommendations from ${r.model}`, body: "AI-generated estimates — review before use." });
+        toast({ tone: "success", title: `${r.items.length} recommendations from ${r.model}`, body: "AI-generated estimates, review before use." });
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Unknown error";
         setError(`AI request failed: ${msg}. You can retry or switch to the rule engine.`);
@@ -103,7 +103,7 @@ export function ConsultantPage() {
     setExcluded(out.excluded);
     setOpen(out.items[0]?.id ?? null);
     if (out.items.length === 0) toast({ tone: "warning", title: "No interventions fit the constraints", body: "Try raising the budget cap or relaxing constraints." });
-    else toast({ tone: "success", title: `${out.items.length} recommendations generated`, body: "Rule engine — no AI model was called." });
+    else toast({ tone: "success", title: `${out.items.length} recommendations generated`, body: "Rule engine, no AI model was called." });
   };
 
   return (
@@ -111,7 +111,7 @@ export function ConsultantPage() {
       <PageHeader
         eyebrow="Transformation Consultant"
         title="Analyse the problem, compare interventions"
-        description="Describe the situation and constraints. Recommendations are ranked by fit and include investment, savings, risks and success metrics — all estimates based on this project's process data."
+        description="Describe the situation and constraints. Recommendations are ranked by fit and include investment, savings, risks and success metrics, all estimates based on this project's process data."
       />
 
       {preset.length > 1 && (
@@ -204,7 +204,7 @@ export function ConsultantPage() {
                     </table>
                   </div>
                 )}
-                <div className="card-foot small muted"><LuInfo aria-hidden /> Savings are estimated net of running cost and are not additive — interventions overlap on the same steps. Use the Scenario Simulator for the combined business case.</div>
+                <div className="card-foot small muted"><LuInfo aria-hidden /> Savings are estimated net of running cost and are not additive, interventions overlap on the same steps. Use the Scenario Simulator for the combined business case.</div>
               </Card>
 
               {excluded.length > 0 && run.id === p.recommendationRuns[0]?.id && (
@@ -255,7 +255,7 @@ function RecCard({ rec, open, onToggle, adopted, onAdopt, stepName, source }: { 
           </div>
           {rec.notes.length > 0 && <div className="rec-notes">{rec.notes.map((n) => <span key={n} className="chip">{n}</span>)}</div>}
           <div className="rec-actions">
-            <span className="small muted">{source === "llm" ? "AI-generated — verify before use." : `Fit score ${rec.fitScore}/100 from the rule engine.`}</span>
+            <span className="small muted">{source === "llm" ? "AI-generated, verify before use." : `Fit score ${rec.fitScore}/100 from the rule engine.`}</span>
             <div className="row-gap">
               <Button size="sm" onClick={() => navigate("simulator")}>Model in simulator</Button>
               <Button size="sm" variant={adopted ? "secondary" : "primary"} disabled={adopted} icon={adopted ? <LuCheck /> : <LuPlus />} onClick={onAdopt}>{adopted ? "On roadmap" : "Add to roadmap"}</Button>

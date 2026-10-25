@@ -2,7 +2,7 @@
  * Turns the on-screen report into a real, readable PDF (A4, selectable text) in the
  * browser. Nothing is uploaded. The renderer walks the report DOM and lays out headings,
  * paragraphs (with bold runs), lists and tables with PDF.js-independent pdf-lib, so it
- * works the same in Safari, Chrome and Firefox — also on phones, where a downloaded
+ * works the same in Safari, Chrome and Firefox, also on phones, where a downloaded
  * HTML file would only show source code.
  */
 import type { PDFDocument as PDFDocumentT, PDFFont, PDFPage, RGB } from "pdf-lib";

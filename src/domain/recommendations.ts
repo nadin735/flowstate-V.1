@@ -111,7 +111,7 @@ const CATALOG: CatalogItem[] = [
       problemStatement: "Most invoices arrive as PDF or paper and must be digitised before processing, even though suppliers increasingly can send structured formats.",
       rootCause: "No inbound channel for structured invoices and no supplier onboarding programme.",
       solution: c.germany
-        ? "Set up a central inbound channel for XRechnung/ZUGFeRD and Peppol, map structured data straight to the ERP, and onboard the top suppliers by volume. German rules already require businesses to be able to receive e-invoices, with issuing obligations phasing in — verify current deadlines with your tax advisor."
+        ? "Set up a central inbound channel for XRechnung/ZUGFeRD and Peppol, map structured data straight to the ERP, and onboard the top suppliers by volume. German rules already require businesses to be able to receive e-invoices, with issuing obligations phasing in, verify current deadlines with your tax advisor."
         : "Set up a central inbound channel for Peppol and other structured formats, map structured data straight to the ERP, and onboard the top suppliers by volume.",
       impact: "Structured invoices bypass capture and keying entirely; estimate assumes 30% of receipt and extraction effort is eliminated in year one.",
       risks: ["Supplier adoption is slower than planned", "Format variants (ZUGFeRD profiles) need validation rules", "Parallel channels during transition"],
@@ -334,7 +334,7 @@ export function generateRecommendations(project: Project, req: RecommendationReq
     const risks = [...item.build(c).risks];
     if (cons.has("erp-fixed") && item.touchesErp) {
       score -= 15;
-      notes.push("Requires ERP configuration — conflicts with “ERP core must stay unchanged”.");
+      notes.push("Requires ERP configuration, conflicts with “ERP core must stay unchanged”.");
     }
     if (cons.has("erp-fixed") && item.id === "rec-rpa") score += 12;
     if (cons.has("limited-it") && item.technology) {

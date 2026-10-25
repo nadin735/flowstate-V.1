@@ -125,7 +125,7 @@ export function PdfImport({ open, onClose, start = null, onApplied }: { open: bo
       }
       const sheet = parseBaselineSheet(String(body.text || "").split("\n"));
       if (sheet.found.length === 0) throw new Error("The AI model returned no recognisable values.");
-      review(name, `Read by AI model ${body.model} — verify every value`, sheet, 1);
+      review(name, `Read by AI model ${body.model}, verify every value`, sheet, 1);
     } catch (e) {
       setPhase({ kind: "error", name, message: `AI reading failed: ${e instanceof Error ? e.message : "unknown error"}` });
     }
@@ -235,7 +235,7 @@ export function PdfImport({ open, onClose, start = null, onApplied }: { open: bo
           </div>
           <details className="adv">
             <summary>What the PDF should contain</summary>
-            <p className="small muted">Labels followed by a colon, in English or German — for example <code>Unternehmen: …</code>, <code>Rechnungen pro Monat: 3.600</code>, <code>Stundensatz: 44,00 EUR</code> — and 1 table row per step (<i>Rechnungseingang, Datenerfassung, Prüfung, Freigabe, Zahlung</i>) with: minutes per invoice, automated share %, error rate %, rework minutes, waiting days and optionally the owner.</p>
+            <p className="small muted">Labels followed by a colon, in English or German, for example <code>Unternehmen: …</code>, <code>Rechnungen pro Monat: 3.600</code>, <code>Stundensatz: 44,00 EUR</code>, and 1 table row per step (<i>Rechnungseingang, Datenerfassung, Prüfung, Freigabe, Zahlung</i>) with: minutes per invoice, automated share %, error rate %, rework minutes, waiting days and optionally the owner.</p>
           </details>
         </div>
       )}
@@ -257,7 +257,7 @@ export function PdfImport({ open, onClose, start = null, onApplied }: { open: bo
           ) : phase.layout.partial ? (
             <div><Button size="sm" onClick={() => review(phase.name, "Text layer read in your browser (partial)", phase.layout!.partial!, phase.layout!.pages)}>Review the {phase.layout.partial.found.length} values found</Button></div>
           ) : (
-            <p className="small muted">Use labels such as “Rechnungen pro Monat: 3.600”, “Stundensatz: 44 €” and 1 row per step (Rechnungseingang, Datenerfassung, Prüfung, Freigabe, Zahlung) — or enter the values manually.</p>
+            <p className="small muted">Use labels such as “Rechnungen pro Monat: 3.600”, “Stundensatz: 44 €” and 1 row per step (Rechnungseingang, Datenerfassung, Prüfung, Freigabe, Zahlung), or enter the values manually.</p>
           ))}
           <div><Button onClick={() => setPhase({ kind: "pick" })}>Choose another file</Button></div>
         </div>
@@ -338,7 +338,7 @@ export function PdfUploadHero({ compact = false }: { compact?: boolean }) {
       <div className="upload-hero-icon" aria-hidden><LuScanLine /></div>
       <div className="upload-hero-text">
         <h2>{compact ? "Update from a PDF" : "Upload your process sheet as PDF"}</h2>
-        <p>{compact ? "Drop a newer scan here to refresh volume, cost and step values." : "Drop a scanned or digital PDF here — FLOWSTATE reads company data, invoice volume, labour cost and every process step, and you check the values before they are used. The file stays in your browser."}</p>
+        <p>{compact ? "Drop a newer scan here to refresh volume, cost and step values." : "Drop a scanned or digital PDF here | FLOWSTATE reads company data, invoice volume, labour cost and every process step, and you check the values before they are used. The file stays in your browser."}</p>
       </div>
       <div className="upload-hero-actions">
         <Button variant={compact ? "secondary" : "primary"} icon={<LuFileUp />} onClick={() => fileRef.current?.click()}>Upload PDF</Button>

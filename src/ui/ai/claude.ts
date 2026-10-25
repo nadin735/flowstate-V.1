@@ -27,7 +27,7 @@ export function sampleErrorMessage(e: unknown): string {
     case "sampling_disabled":
       return "Claude is not available for this account.";
     case "rate_limited":
-      return "Too many requests or usage limit reached — try again later.";
+      return "Too many requests or usage limit reached, try again later.";
     case "session_expired":
       return "Please sign in to claude.ai again.";
     case "invalid_json":

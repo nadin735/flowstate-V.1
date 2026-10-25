@@ -21,7 +21,7 @@ export function createTestDataProject(prefs?: Partial<Preferences>, today: strin
   // The project started six weeks ago, so the roadmap shows real progress instead of an untouched plan.
   const p = createEmptyProject(addDays(today, -42));
   p.name = "Invoice processing automation";
-  p.description = "TEST DATA — fictional company and illustrative figures for trying FLOWSTATE. Replace with your own data via PDF upload or manual entry.";
+  p.description = "TEST DATA, fictional company and illustrative figures for trying FLOWSTATE. Replace with your own data via PDF upload or manual entry.";
   p.sponsor = "Dr. Jens Hoffmann";
   p.lead = "Katrin Albers";
   p.company = {

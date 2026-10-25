@@ -123,8 +123,8 @@ export function parseBaselineSheet(lines: string[]): ExtractedSheet {
           ...(owner ? { owner } : {}),
         };
         if (auto > 95 || err > 60) out.warnings.push(`${first}: values out of range were capped.`);
-        if (step.errorRate > 0.15) out.warnings.push(`${first}: error rate of ${Math.round(step.errorRate * 100)} % is unusually high — please check (OCR may have dropped a decimal comma).`);
-        if (step.minutesPerInvoice > 60) out.warnings.push(`${first}: ${step.minutesPerInvoice} minutes per invoice is unusually high — please check.`);
+        if (step.errorRate > 0.15) out.warnings.push(`${first}: error rate of ${Math.round(step.errorRate * 100)} % is unusually high, please check (OCR may have dropped a decimal comma).`);
+        if (step.minutesPerInvoice > 60) out.warnings.push(`${first}: ${step.minutesPerInvoice} minutes per invoice is unusually high, please check.`);
         out.steps[alias[0]] = step;
         const key = `step.${alias[0]}`;
         if (!out.found.includes(key)) out.found.push(key);

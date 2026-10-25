@@ -30,7 +30,7 @@ export function buildRecommendationPrompt(p: Project, request: { problem: string
     `id (kebab-case string), title (<=120 chars), targetStepId (one of ${steps.map((s) => `"${s.id}"`).join(", ")} or null), problemStatement, rootCause, solution, impact (all strings, <=600 chars), ` +
     `monthlySavings (number, estimated monthly labour savings in EUR NET of recurring running cost, derived from estMonthlyCostEUR of the targeted steps), complexity ("Low"|"Medium"|"High"), investment (number, EUR), implementationWeeks (integer), ` +
     `risks (array of 2-4 strings), successMetrics (array of 2-4 measurable strings), fitScore (0-100), notes (array of 0-3 strings stating key assumptions).\n` +
-    `Respect every constraint; exclude interventions whose investment exceeds the budget cap. Savings across items overlap — do not inflate them.`;
+    `Respect every constraint; exclude interventions whose investment exceeds the budget cap. Savings across items overlap, do not inflate them.`;
   return { system, user };
 }
 

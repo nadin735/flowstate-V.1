@@ -1,7 +1,7 @@
 /**
  * Published accounts-payable benchmarks used to put a company's baseline in context.
  * Figures are quoted as published (USD, mixed company sizes) and are a reference point,
- * not a target — definitions differ from FLOWSTATE's model in detail.
+ * not a target, definitions differ from FLOWSTATE's model in detail.
  */
 export interface BenchmarkSource {
   id: string;
@@ -70,7 +70,7 @@ export const BENCHMARKS: Benchmark[] = [
       { label: "Average", value: 0.326, source: "ardent" },
       { label: "Best-in-class", value: 0.492, source: "ardent" },
     ],
-    note: "Compared with FLOWSTATE's automated share of handling work — a close but not identical measure.",
+    note: "Compared with FLOWSTATE's automated share of handling work, a close but not identical measure.",
   },
   {
     key: "exceptionRate",

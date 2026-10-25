@@ -1,6 +1,6 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- *  IMPRESSUM & DATENSCHUTZ — NUR DIESE 4 ANGABEN EINTRAGEN
+ *  IMPRESSUM & DATENSCHUTZ, NUR DIESE 4 ANGABEN EINTRAGEN
  * ─────────────────────────────────────────────────────────────────────────────
  * FLOWSTATE ist ein privates, nicht-kommerzielles Bewerbungsprojekt. Dafür reicht
  * eine Anbieterkennzeichnung nach § 18 Abs. 1 MStV (Name + Anschrift) plus E-Mail.

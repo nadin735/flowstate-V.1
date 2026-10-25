@@ -1,5 +1,5 @@
 /**
- * Animated TOPOLOGY background for the welcome hero — a self-contained canvas port of the
+ * Animated TOPOLOGY background for the welcome hero, a self-contained canvas port of the
  * Vanta.js TOPOLOGY look (cyan contour lines on #eaeaea, reacting to the mouse), with the same
  * options as the original brief: mouseControls, touchControls, gyroControls off, minHeight/
  * minWidth 200, scale 1, scaleMobile 1, color 0x00dfff, backgroundColor 0xeaeaea.

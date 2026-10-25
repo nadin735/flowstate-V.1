@@ -3,7 +3,7 @@
  *
  * Pure, side-effect free functions. Every number shown in the UI that relates to
  * cost, savings or ROI comes from here. Results are ESTIMATES based on the demo
- * assumptions — never measured outcomes.
+ * assumptions, never measured outcomes.
  *
  * Measurement periods: ROI and "payback after go-live" count from go-live
  * (month 1 = first month after go-live); "payback from project start" adds the
@@ -139,7 +139,7 @@ export interface FinanceInputs {
   automationErrorReduction: number;
   cycleTimeDays: number;
   roiHorizonMonths: number;
-  /** Optional extensions — omitted values reproduce the plain labour-cost model. */
+  /** Optional extensions, omitted values reproduce the plain labour-cost model. */
   avgInvoiceValue?: number;
   discountEligibleShare?: number;
   discountRate?: number;
@@ -242,9 +242,9 @@ export function calculateScenario(inputs: FinanceInputs, scenario: Scenario): Sc
   const opex = Math.max(0, safeNumber(scenario.monthlyOperatingCost));
   const horizon = Math.round(clamp(inputs.roiHorizonMonths, 12, 60));
 
-  if (volume === 0) warnings.push("Monthly invoice volume is 0 — no savings can be calculated.");
-  if (minutes === 0) warnings.push("Processing time is 0 — processing-time reduction is undefined.");
-  if (rate === 0) warnings.push("Hourly labour cost is 0 — labour savings will be 0.");
+  if (volume === 0) warnings.push("Monthly invoice volume is 0, no savings can be calculated.");
+  if (minutes === 0) warnings.push("Processing time is 0, processing-time reduction is undefined.");
+  if (rate === 0) warnings.push("Hourly labour cost is 0, labour savings will be 0.");
 
   // Monthly labour cost = volume × hours per invoice × hourly cost (handling + expected rework).
   const currentHoursPerInvoice = minutes / 60 + (err * rework) / 60;
@@ -290,7 +290,7 @@ export function calculateScenario(inputs: FinanceInputs, scenario: Scenario): Sc
 
   let paybackMonths: number | null = null;
   if (monthlyNetSavings <= 0) {
-    if (monthlyNetSavings < 0) warnings.push("Operating cost exceeds the benefits — this scenario loses money every month.");
+    if (monthlyNetSavings < 0) warnings.push("Operating cost exceeds the benefits, this scenario loses money every month.");
   } else if (ramp === 0) {
     // Payback = initial investment ÷ monthly net savings.
     paybackMonths = investment / monthlyNetSavings;
@@ -308,7 +308,7 @@ export function calculateScenario(inputs: FinanceInputs, scenario: Scenario): Sc
     }
     if (investment === 0) paybackMonths = 0;
   }
-  if (investment === 0) warnings.push("Initial investment is 0 — ROI is not defined (shown as n/a).");
+  if (investment === 0) warnings.push("Initial investment is 0, ROI is not defined (shown as n/a).");
   const implementationMonths = Math.max(0, Math.round(safeNumber(scenario.implementationMonths)));
   const paybackFromStartMonths = paybackMonths === null ? null : paybackMonths + implementationMonths;
 

@@ -165,7 +165,7 @@ function Shell() {
           {isTestData(project) && (
             <div className="demo-banner" role="note">
               <LuFlaskConical aria-hidden />
-              <span><b>Demo</b> — fictional company (Hanse Präzisionsteile GmbH) with illustrative figures. Everything is editable; nothing is stored beyond this tab.</span>
+              <span><b>Demo</b>: fictional company (Hanse Präzisionsteile GmbH) with illustrative figures. Everything is editable; nothing is stored beyond this tab.</span>
               <button className="btn btn-sm btn-primary" onClick={async () => { await resetProject(); navigate("overview"); }}>Start with my own data</button>
             </div>
           )}

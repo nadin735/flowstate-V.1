@@ -128,10 +128,10 @@ export function OverviewPage() {
           <div className="small muted mt-4">{fmt.eur(health.budgetCommitted)} of {fmt.eur(health.budgetTotal)} implementation budget committed</div>
           <ul className="issue-list">
             {health.overdueMilestones.map((m) => <li key={m.id} className="issue-danger"><LuTriangleAlert aria-hidden /> Milestone overdue: {m.name} ({fmt.shortDate(m.due)})</li>)}
-            {health.overdueTasks.map((t) => <li key={t.id} className="issue-warning"><LuTriangleAlert aria-hidden /> Overdue: {t.title} — due {fmt.shortDate(t.due)}</li>)}
+            {health.overdueTasks.map((t) => <li key={t.id} className="issue-warning"><LuTriangleAlert aria-hidden /> Overdue: {t.title}, due {fmt.shortDate(t.due)}</li>)}
             {health.blockedTasks.map((t) => <li key={t.id} className="issue-warning"><LuTriangleAlert aria-hidden /> Blocked: {t.title}</li>)}
             {health.reasons.filter((r) => /risk|behind plan/.test(r)).map((r) => <li key={r} className="issue-warning"><LuTriangleAlert aria-hidden /> {r[0].toUpperCase() + r.slice(1)}</li>)}
-            {health.health === "no-plan" && <li className="issue-info">No roadmap tasks yet — progress and health appear once a plan exists. <button className="link-btn" onClick={() => dispatch({ type: "generateStarterRoadmap" })}>Generate starter roadmap</button></li>}
+            {health.health === "no-plan" && <li className="issue-info">No roadmap tasks yet, progress and health appear once a plan exists. <button className="link-btn" onClick={() => dispatch({ type: "generateStarterRoadmap" })}>Generate starter roadmap</button></li>}
             {health.health !== "no-plan" && health.reasons.length === 0 && <li className="issue-ok"><LuCircleCheck aria-hidden /> No overdue items</li>}
             {nextMilestone && <li className="issue-info">Next milestone: <b>{nextMilestone.name}</b> · {fmt.shortDate(nextMilestone.due)}</li>}
           </ul>

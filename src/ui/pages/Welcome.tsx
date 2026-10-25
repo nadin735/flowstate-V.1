@@ -108,7 +108,7 @@ export function WelcomePage({ onEnter }: { onEnter: (route: string) => void }) {
           </div>
           <div className="wl-rise wl-rise-2">
             <p className="wl-lead">
-              Give FLOWSTATE your invoice process data —<br className="wl-br" /> it maps the process, prices 3 transformation options and plans the fix.
+              Give FLOWSTATE your invoice process data,<br className="wl-br" /> and it maps the process, prices 3 transformation options and plans the fix.
             </p>
           </div>
 

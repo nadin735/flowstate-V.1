@@ -73,7 +73,7 @@ export function SimulatorPage() {
         title="Compare 3 transformation options"
         description={<>Every number recalculates instantly. ROI counts from go-live with a {a.rampUpMonths}-month ramp-up; payback is also shown from project start. All outputs are <DataTag kind="estimate" />.</>}
         actions={<>
-          <Button icon={<LuWandSparkles />} onClick={() => { dispatch({ type: "applyBenchmarks" }); toast({ tone: "info", title: "Benchmark values loaded", body: "Typical levers and costs scaled to your invoice volume — replace with vendor quotes." }); }}>Load benchmark values</Button>
+          <Button icon={<LuWandSparkles />} onClick={() => { dispatch({ type: "applyBenchmarks" }); toast({ tone: "info", title: "Benchmark values loaded", body: "Typical levers and costs scaled to your invoice volume, replace with vendor quotes." }); }}>Load benchmark values</Button>
           <Button icon={<LuRotateCcw />} onClick={() => { dispatch({ type: "resetScenarios" }); toast({ tone: "info", title: "Scenario levers cleared" }); }}>Clear levers</Button>
         </>}
       />

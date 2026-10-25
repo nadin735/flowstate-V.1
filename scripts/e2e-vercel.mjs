@@ -1,7 +1,7 @@
 // Checks the Vercel build (.vercel/output) locally: static files + the AI functions,
 // served by a minimal stand-in for Vercel's router. Run `npm run build:vercel` first.
 // The AI call uses a fake key, so the expected result is a clean error message from the
-// API (401) or a network error — proving the function chain without spending credits.
+// API (401) or a network error, proving the function chain without spending credits.
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";

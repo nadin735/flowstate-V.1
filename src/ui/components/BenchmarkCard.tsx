@@ -51,14 +51,14 @@ export function BenchmarkCard({ values, print = false }: { values: BenchmarkValu
       </div>
       <ol className="bench-sources small muted">
         {Object.values(SOURCES).filter((s) => used.has(s.id)).map((s) => (
-          <li key={s.id}>{s.publisher}, <i>{s.name}</i> ({s.year}) — <a href={s.url} target="_blank" rel="noopener noreferrer">source{!print && <LuExternalLink aria-hidden />}</a></li>
+          <li key={s.id}>{s.publisher}, <i>{s.name}</i> ({s.year}), <a href={s.url} target="_blank" rel="noopener noreferrer">source{!print && <LuExternalLink aria-hidden />}</a></li>
         ))}
       </ol>
     </>
   );
   if (print) return body;
   return (
-    <Card title="Industry benchmarks" subtitle="Your baseline and target next to published accounts-payable benchmarks — a reference point, not a guarantee" pad={false}>
+    <Card title="Industry benchmarks" subtitle="Your baseline and target next to published accounts-payable benchmarks, a reference point, not a guarantee" pad={false}>
       {body}
     </Card>
   );

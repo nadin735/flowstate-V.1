@@ -1,7 +1,7 @@
 /**
  * Reads the text layer of a PDF in the browser with PDF.js (no upload, nothing leaves
  * the browser). PDF.js runs on the main thread ("fake worker"): process sheets are a
- * few pages, and this works everywhere — also from a local file and under strict CSPs.
+ * few pages, and this works everywhere, also from a local file and under strict CSPs.
  */
 // The legacy build ships polyfills, so it also runs in browsers without the newest JS features.
 import "./polyfills";

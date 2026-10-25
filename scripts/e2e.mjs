@@ -32,7 +32,7 @@ for (let i = 0; i < 50; i++) {
 }
 
 const results = [];
-const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(`${ok ? "✔" : "✘"} ${name}${detail ? " — " + detail : ""}`); };
+const check = (name, ok, detail = "") => { results.push({ name, ok, detail }); console.log(`${ok ? "✔" : "✘"} ${name}${detail ? ", " + detail : ""}`); };
 
 const browser = await chromium.launch();
 const errors = [];
