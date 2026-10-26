@@ -18,8 +18,28 @@ const k=document.createElement('div');k.id='cap';k.style.cssText='position:fixed
 const add=()=>{if(!document.body)return;document.body.append(k,c)};
 document.addEventListener('DOMContentLoaded',add);if(document.body)add();
 addEventListener('mousemove',e=>{c.style.left=e.clientX+'px';c.style.top=e.clientY+'px'},true);
+const sy=document.createElement('div');sy.id='sy';sy.style.cssText='position:fixed;left:0;bottom:0;width:28px;height:7px;z-index:99999;background:#fff';
+const add2=()=>{if(document.body)document.body.append(sy)};document.addEventListener('DOMContentLoaded',add2);if(document.body)add2();
+window.__sync=i=>{const v=255-(i+1)*6;sy.style.background='rgb('+v+','+v+','+v+')'};
 window.__cap=t=>{k.textContent=t};})();
 """
+
+
+def video_starts(rec, n, W):
+    # Liest die Szenenmarken (kleiner Grauwert unten links) aus der Aufnahme: so liegen Stimme und Untertitel exakt auf dem Bild.
+    import numpy as np
+    from PIL import Image
+    d = os.path.join(W, "sync"); os.makedirs(d, exist_ok=True)
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", rec, "-vf", "fps=10,crop=10:3:6:715,format=gray", f"{d}/s%05d.png"], check=False)
+    fs = sorted(os.listdir(d)); first = {}; last = None; run_ = 0
+    for k, f in enumerate(fs):
+        v = float(np.asarray(Image.open(os.path.join(d, f)), dtype=float).mean()); idx = round((255 - v) / 6) - 1
+        if 0 <= idx < n:
+            run_ = run_ + 1 if idx == last else 1; last = idx
+            if run_ >= 3 and idx not in first: first[idx] = (k - 2) / 10
+        else: last = None; run_ = 0
+    if len(first) < n: return None
+    return [first[i] for i in range(n)]
 
 
 class H:  # Hilfen für die Szenen
@@ -69,7 +89,7 @@ def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel
         h = H(pg, now)
         pg.goto(URL + start_hash); pg.wait_for_selector(ready_sel); pg.wait_for_timeout(600)
         for i in range(len(TEXT)):
-            s0 = now(); starts.append(s0 + 0.15); h.cap(TEXT[i])
+            s0 = now(); starts.append(s0 + 0.15); h.cap(TEXT[i]); pg.evaluate('i=>window.__sync&&window.__sync(i)', i)
             scene(i, h)
             rest = s0 + DUR[i] + 0.7 - now()
             if rest > 0: pg.wait_for_timeout(int(rest * 1000))
@@ -77,6 +97,12 @@ def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel
         poster_t = starts[min(poster_scene, len(starts) - 1)] + 1.5
         ctx.close(); b.close()
     rec = os.path.join(W, [x for x in os.listdir(W) if x.endswith(".webm") and x != "out.webm"][0])
+    vstarts = video_starts(rec, len(TEXT), W)
+    if vstarts: poster_t = vstarts[min(poster_scene, len(vstarts) - 1)] + 1.5; starts = vstarts; total = max(total, vstarts[-1] + DUR[-1] + 1.5)
+    try: total = max(total, float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", rec], capture_output=True, text=True).stdout.strip() or 0))
+    except Exception: pass
+    cut = max(0.0, starts[0] - 1.0) if vstarts else 0.0  # leere Ladezeit am Anfang abschneiden
+    starts = [x - cut for x in starts]; poster_t -= cut; total -= cut
     buf = np.zeros(int((total + 1) * SR), dtype=np.float32)
     for (x, _), s in zip(aud, starts): j = int(s * SR); buf[j:j + len(x)] += x
     wav = os.path.join(W, "full.wav")
@@ -87,7 +113,7 @@ def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel
     for i, (t, s) in enumerate(zip(TEXT, starts)): vtt += [str(i + 1), f"{fm(s)} --> {fm(s + DUR[i])}", t, ""]
     open(f"{out_dir}/{name}{sx}.vtt", "w").write("\n".join(vtt))
     run_ = lambda *a: subprocess.run(a, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    run_("ffmpeg", "-y", "-i", rec, "-i", wav, "-t", f"{total:.2f}", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "24", "-preset", "medium", "-r", "25", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", f"{out_dir}/{name}{sx}.mp4")
-    run_("ffmpeg", "-y", "-i", rec, "-i", wav, "-t", f"{total:.2f}", "-c:v", "libvpx-vp9", "-crf", "36", "-b:v", "0", "-r", "25", "-c:a", "libopus", "-b:a", "64k", f"{out_dir}/{name}{sx}.webm")
-    run_("ffmpeg", "-y", "-ss", f"{poster_t:.2f}", "-i", rec, "-frames:v", "1", f"{out_dir}/{name}-poster{sx}.png")
+    run_("ffmpeg", "-y", "-ss", f"{cut:.2f}", "-i", rec, "-i", wav, "-t", f"{total:.2f}", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "24", "-preset", "medium", "-r", "25", "-c:a", "aac", "-b:a", "96k", "-movflags", "+faststart", f"{out_dir}/{name}{sx}.mp4")
+    run_("ffmpeg", "-y", "-ss", f"{cut:.2f}", "-i", rec, "-i", wav, "-t", f"{total:.2f}", "-c:v", "libvpx-vp9", "-crf", "36", "-b:v", "0", "-r", "25", "-c:a", "libopus", "-b:a", "64k", f"{out_dir}/{name}{sx}.webm")
+    run_("ffmpeg", "-y", "-ss", f"{poster_t + cut:.2f}", "-i", rec, "-frames:v", "1", f"{out_dir}/{name}-poster{sx}.png")
     print("fertig", name, L, round(total, 1), "s")
