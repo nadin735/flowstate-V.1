@@ -15,11 +15,11 @@ LOCALE = {"de": "de-DE", "en": "en-US", "ar": "ar-JO"}
 INJECT = """
 (()=>{const c=document.createElement('div');c.id='fakecur';c.style.cssText='position:fixed;z-index:99999;width:22px;height:22px;border-radius:50%;background:#1c1b19;border:3px solid #fff;box-shadow:0 0 0 1px #1c1b19;pointer-events:none;left:-40px;top:-40px;transform:translate(-50%,-50%)';
 const k=document.createElement('div');k.id='cap';k.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:99998;background:#fff;color:#1c1b19;border-top:2px solid #1c1b19;padding:14px 40px;font:600 22px/1.35 system-ui,sans-serif;min-height:30px;text-align:center';
-const add=()=>{if(!document.body)return;document.body.append(k,c)};
+const add=()=>{if(!document.body)return;document.documentElement.append(k,c)};
 document.addEventListener('DOMContentLoaded',add);if(document.body)add();
 addEventListener('mousemove',e=>{c.style.left=e.clientX+'px';c.style.top=e.clientY+'px'},true);
 const sy=document.createElement('div');sy.id='sy';sy.style.cssText='position:fixed;left:0;bottom:0;width:28px;height:7px;z-index:99999;background:#fff';
-const add2=()=>{if(document.body)document.body.append(sy)};document.addEventListener('DOMContentLoaded',add2);if(document.body)add2();
+const add2=()=>{if(document.body)document.documentElement.append(sy)};document.addEventListener('DOMContentLoaded',add2);if(document.body)add2();
 window.__sync=i=>{const v=255-(i+1)*6;sy.style.background='rgb('+v+','+v+','+v+')'};
 window.__cap=t=>{k.textContent=t};})();
 """
@@ -59,12 +59,38 @@ class H:  # Hilfen für die Szenen
         if click: self.pg.mouse.click(x, y)
 
 
+def music_bed(n, SR, bpm=118):
+    """Synthetische Hintergrundmusik: Kick, Hi-Hat, Bass, Arpeggio. Offline, ohne Lizenzfragen."""
+    t = np.arange(n) / SR; out = np.zeros(n, dtype=np.float32); beat = 60.0 / bpm
+    notes = [57, 57, 60, 55]  # Am, Am, C, G (MIDI Grundton pro Takt)
+    for k in range(int(n / SR / beat) + 2):
+        st = int(k * beat * SR)
+        if st >= n: break
+        def put(sig, g):
+            e = min(n, st + len(sig)); out[st:e] += g * sig[:e - st]
+        tk = np.arange(int(0.18 * SR)) / SR
+        put(np.sin(2 * np.pi * (110 * np.exp(-tk * 18) + 45) * tk) * np.exp(-tk * 14), 0.9)  # Kick auf jedem Schlag
+        th = np.arange(int(0.05 * SR)) / SR
+        if k % 2 == 1: put(np.random.randn(len(th)).astype(np.float32) * np.exp(-th * 90), 0.18)  # Hi-Hat auf Off-Beat
+        bar = (k // 4) % 4; root = notes[bar]
+        fb = 440 * 2 ** ((root - 69 - 12) / 12); tb = np.arange(int(beat * 0.9 * SR)) / SR
+        put(np.sign(np.sin(2 * np.pi * fb * tb)) * 0.5 * np.exp(-tb * 3) * (1 if k % 2 == 0 else 0.6), 0.35)
+        for q in range(2):  # Arpeggio in Achteln
+            fa = 440 * 2 ** ((root + [12, 15, 19, 24][(k * 2 + q) % 4] - 69) / 12); ta = np.arange(int(beat * 0.5 * SR)) / SR
+            sidx = st + int(q * beat * 0.5 * SR)
+            if sidx < n:
+                e = min(n, sidx + len(ta)); out[sidx:e] += (0.22 * np.sin(2 * np.pi * fa * ta) * np.exp(-ta * 7))[:e - sidx].astype(np.float32)
+    fade = np.minimum(1, np.minimum(t / 1.0, (n / SR - t) / 1.5)).astype(np.float32)
+    return out * fade
+
 def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel="body", init_js="", viewport=(1500, 844), poster_scene=1, scroll_container=None):
     L = lang; TEXT = texts[L]
     W = f"/tmp/vid-{name}-{L}"; import shutil; shutil.rmtree(W, ignore_errors=True); os.makedirs(W, exist_ok=True); os.makedirs(out_dir, exist_ok=True)
     d, f, ls = VOICES[L]; M = TTS + d
+    AD = os.environ.get('VOICE_STYLE') == 'ad'  # lebendiger: mehr Betonung, etwas schneller
+    ns, nw, ls = (0.9, 1.0, ls * 0.9) if AD else (0.667, 0.7, ls)
     tts = sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
-        vits=sherpa_onnx.OfflineTtsVitsModelConfig(model=M + f, tokens=M + "tokens.txt", data_dir=M + "espeak-ng-data", noise_scale=0.667, noise_scale_w=0.7, length_scale=ls * PITCH),
+        vits=sherpa_onnx.OfflineTtsVitsModelConfig(model=M + f, tokens=M + "tokens.txt", data_dir=M + "espeak-ng-data", noise_scale=ns, noise_scale_w=nw, length_scale=ls * PITCH),
         num_threads=4, provider="cpu")))
     aud = []
     for t in TEXT:
@@ -84,6 +110,7 @@ def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel
         b = p.chromium.launch()
         ctx = b.new_context(locale=LOCALE[L], viewport={"width": viewport[0], "height": viewport[1]}, record_video_dir=W, record_video_size={"width": 1280, "height": 720})
         ctx.add_init_script(INJECT)
+        if os.environ.get('FX'): ctx.add_init_script(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fx.js')).read())
         if init_js: ctx.add_init_script(init_js.replace("__L__", L))
         pg = ctx.new_page(); t0 = time.perf_counter(); now = lambda: time.perf_counter() - t0
         h = H(pg, now)
@@ -105,6 +132,18 @@ def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel
     starts = [x - cut for x in starts]; poster_t -= cut; total -= cut
     buf = np.zeros(int((total + 1) * SR), dtype=np.float32)
     for (x, _), s in zip(aud, starts): j = int(s * SR); buf[j:j + len(x)] += x
+    if os.environ.get('MUSIC'):
+        m = music_bed(len(buf), SR); env = np.convolve(np.abs(buf), np.ones(int(0.25 * SR)) / int(0.25 * SR), mode='same')
+        duck = np.clip(1.0 - env * 9, 0.25, 1.0)  # unter der Stimme leiser
+        buf = buf + m * 0.3 * duck
+        for si, st0 in enumerate(starts):  # Wisch Effekt an jedem Szenenwechsel
+            if si == 0: continue
+            j = int(max(0, st0 - 0.05) * SR); nn = int(0.45 * SR); tt = np.arange(nn) / SR
+            nz = np.random.randn(nn).astype(np.float32); k = np.maximum(3, (np.linspace(60, 6, nn)).astype(int))
+            sw = np.cumsum(nz) ; sw = sw - np.concatenate([np.zeros(40), sw[:-40]]) if nn > 40 else sw
+            env_ = np.sin(np.pi * tt / 0.45) ** 2; sw = (sw / (np.abs(sw).max() + 1e-6) * env_ * 0.35).astype(np.float32)
+            e_ = min(len(buf), j + nn); buf[j:e_] += sw[:e_ - j]
+        buf = buf; buf = buf / max(1.0, float(np.abs(buf).max()) / 0.95)
     wav = os.path.join(W, "full.wav")
     with wave.open(wav, "wb") as w: w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((np.clip(buf, -1, 1) * 32767).astype("<i2").tobytes())
     sx = "" if L == "en" else "-" + L
