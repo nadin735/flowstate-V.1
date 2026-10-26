@@ -159,7 +159,7 @@ try {
   const savingsIntake = await text(".stat-grid .stat >> nth=3 >> .stat-value");
   check("Business case shows positive savings right after data entry (benchmarks applied)", !["0€", "€0"].includes(savingsIntake.replace(/\s/g, "")) && !savingsIntake.includes("-"), savingsIntake);
   check("Savings come with a pessimistic–optimistic range", (await page.locator(".stat-grid .stat >> nth=3").innerText()).includes("Range"));
-  check("Project health is honest without a plan", (await page.locator(".card", { hasText: "Project health" }).locator(".badge").first().innerText()).includes("No plan yet"));
+  check("Project health is honest without a plan", (await page.locator(".ov-board", { hasText: "Is the project on track?" }).locator(".badge").first().innerText()).includes("No plan yet"));
   check("Company from intake is used", (await page.locator(".ws-name").innerText()).trim() === "Intake GmbH");
   // Start over empty for the page-by-page journey below
   await go("settings");
@@ -195,7 +195,7 @@ try {
   await sleep(200);
   await go("overview");
   check("Entered inputs drive the overview", (await text(".stat-grid .stat >> nth=0 >> .stat-value")) !== "0 €", await text(".stat-grid .stat >> nth=0 >> .stat-value"));
-  check("Setup checklist reflects progress", (await text(".card .badge")).startsWith("4 / 5"), await text(".card .badge"));
+  check("Setup checklist reflects progress", (await text(".card:has(.setup-list) .badge")).startsWith("4 / 5"), await text(".card:has(.setup-list) .badge"));
   await go("analytics");
   check("KPI page shows derived baseline without measurements", await page.getByText("No measurements recorded yet").isVisible());
   await page.locator("#kpi-cpi").fill("11.4");
@@ -443,7 +443,7 @@ try {
   await page.locator(".wl-fine").getByRole("link", { name: "Impressum" }).click();
   await page.waitForSelector(".legal h1");
   check("Impressum page reachable from the start page (§ 18 MStV)", (await page.locator(".legal h1").innerText()) === "Impressum" && (await page.getByText("Angaben gemäß § 18 Abs. 1 MStV").isVisible()));
-  check("Legal pages flag missing operator details", await page.locator(".legal .callout-danger").isVisible());
+  check("Legal pages show no placeholder warning (no address on purpose)", !(await page.locator(".legal .callout-danger").isVisible()));
   await page.locator(".legal-links").getByRole("link", { name: "Datenschutz" }).click();
   await page.waitForFunction(() => document.querySelector(".legal h1")?.textContent === "Datenschutzerklärung");
   check("Privacy policy covers hosting, storage, AI provider and rights", await (async () => { const t = await page.locator(".legal").innerText(); return ["Hosting", "sessionStorage", "KI-Funktionen", "Ihre Rechte", "Anthropic", "Art. 15–21"].every((w) => t.includes(w)); })());

@@ -127,6 +127,7 @@ export function WelcomePage({ onEnter }: { onEnter: (route: string) => void }) {
             </div>
             <div className="wl-status">
               <button className="wl-go" onClick={() => { dispatch({ type: "loadTestData" }); onEnter("overview"); toast({ tone: "success", title: "Test data loaded", body: "Fictional company with process, scenarios, roadmap, KPIs and recommendations. Replace it with your own data any time." }); }}>Try with test data <LuArrowRight aria-hidden /></button>
+              <button className="wl-go wl-go-muted" onClick={() => onEnter("guide")}>New here? One minute guide (EN, DE, عربي) <LuArrowRight aria-hidden /></button>
               <button className="wl-go wl-go-muted" onClick={() => { setPdfStart("demo"); setPdfOpen(true); }}>Try the PDF import with a demo scan <LuArrowRight aria-hidden /></button>
             </div>
             <p className="wl-fine">Your data stays in this browser session only and is deleted when the session ends. PDFs are read in your browser unless you choose AI reading. · <a href="#/impressum">Impressum</a> · <a href="#/datenschutz">Datenschutz</a></p>

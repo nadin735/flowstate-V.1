@@ -75,6 +75,7 @@ if (single) {
   await copyFile("public/index.html", "dist/index.html");
   await cp("public/fonts", "dist/fonts", { recursive: true });
   await copyFile("public/og.png", "dist/og.png");
+  await cp("public/video", "dist/video", { recursive: true }).catch(() => {});
   await copyFile("THIRD_PARTY_NOTICES.txt", "dist/third-party-notices.txt");
 }
 

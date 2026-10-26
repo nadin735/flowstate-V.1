@@ -1,9 +1,10 @@
-node_modules
-dist/
-dist-server/
-data/
-e2e-output/
 .env
-dist-hosted/
 .vercel/
+__pycache__/
+data/
 dist-demo/
+dist-hosted/
+dist-server/
+dist/
+e2e-output/
+node_modules
