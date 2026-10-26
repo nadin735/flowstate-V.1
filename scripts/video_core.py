@@ -41,7 +41,7 @@ class H:  # Hilfen für die Szenen
 
 def run(name, lang, texts, scene, serve_dir, out_dir, start_hash="#/", ready_sel="body", init_js="", viewport=(1500, 844), poster_scene=1, scroll_container=None):
     L = lang; TEXT = texts[L]
-    W = f"/tmp/vid-{name}-{L}"; os.makedirs(W, exist_ok=True); os.makedirs(out_dir, exist_ok=True)
+    W = f"/tmp/vid-{name}-{L}"; import shutil; shutil.rmtree(W, ignore_errors=True); os.makedirs(W, exist_ok=True); os.makedirs(out_dir, exist_ok=True)
     d, f, ls = VOICES[L]; M = TTS + d
     tts = sherpa_onnx.OfflineTts(sherpa_onnx.OfflineTtsConfig(model=sherpa_onnx.OfflineTtsModelConfig(
         vits=sherpa_onnx.OfflineTtsVitsModelConfig(model=M + f, tokens=M + "tokens.txt", data_dir=M + "espeak-ng-data", noise_scale=0.667, noise_scale_w=0.7, length_scale=ls * PITCH),
